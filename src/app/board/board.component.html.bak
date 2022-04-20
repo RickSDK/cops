@@ -1,0 +1,213 @@
+<img id="" class="hidden-xs" style="position: fixed; left:0, top: 0; width: 100%; min-height: 100%; z-index: -1;" src="assets/splash/spBW.png">
+<img id="" class="visible-xs" style="position: fixed; left:0, top: 0; width: 100%; min-height: 100%; z-index: -1;" src="assets/splash/spBW2.png">
+
+
+<table width=100%><tr><td align=center>
+	<div style="background-color: #037;"><img style="width: 100%;" id="copsLogo" src="assets/copsLogo2.png" class="image"></div>
+	<div class="popupTitle" style="background-color: #037;">
+		<button (click)="exitGame()" class="button-white tight">Exit Game</button>
+		<button (click)="showPopup('infoPopup')" class="button-blue">Rules</button>
+		<button (click)="showPopup('charactersPopup')" class="button-blue">Characters</button>
+	</div>
+<div *ngIf="gameObj && youPlayer" style="display: inline-block; text-align: center; vertical-align: middle; width: 100%; max-width: 500px;">
+	<div class="boxed" style="padding-bottom: 20px; margin-bottom: 20px;">
+		<div class="cell-group">
+			<div class="popupTitle">{{gameObj.name}} - Round: {{gameObj.round}}</div>
+			<div>{{gameObj.phase}}</div>
+			<table width=100%>
+			<tr class="popupTitle"><td></td><td>Name</td><td>Card</td><td>Pts</td></tr>
+			<tr *ngFor="let player of gameObj.players" class="cell-row" (click)=clickPlayer(player) [ngStyle]="playerStyles(selectedPlayer && player.name==selectedPlayer.name, (youPlayer && youPlayer.criminalFlg && player.criminalFlg))">
+				<td><img src="assets/avatars/{{player.avatar}}" height=40></td>
+				<td>
+					<i *ngIf="player && player.checkFlg" class="fa fa-check" style="color: green;"></i>
+					<i *ngIf="player.hostFlg" class="fa fa-h-square" style="color: orange;"></i> 
+					<i *ngIf="player.winnerFlg" class="fa fa-trophy" style="color: blue;"></i> 
+					{{player.name}} <span *ngIf="testMode">[{{player.id}}] ({{player.leftId}}, {{player.rightId}}) a:{{player.arrestId}} p:{{player.peekId}} s:{{player.switchCards}}</span>
+					<i *ngIf="player.youFlg" class="fa fa-arrow-left" style="color: green;"></i> 
+					</td>
+				<td> 
+					<img (click)=selectCard(cards[0]) *ngIf="player.id!=youPlayer.id && player.id!=youPlayer.peekId" src="assets/cards/cardBack.jpg" title="Unknown" height=40 class="card2">
+					<img *ngIf="player.id==youPlayer.id || player.id==youPlayer.peekId" (click)=selectCard(player.card) src="assets/cards/{{player.card.src}}" title="{{player.card.name}}" height=40 class="card2">
+					<img *ngIf="testMode" (click)=selectCard(player.card) src="assets/cards/{{player.card.src}}" title="{{player.card.name}}" height=30 class="card2">
+				</td>
+				<td>{{player.points}}</td>
+			</tr>
+			</table>
+		</div>
+		<div class="cell-group">
+			<div class="popupTitle">Cards in game:</div>
+			<img (click)=selectCard(card) *ngFor="let card of playingCards" src="assets/cards/{{card.src}}" title="{{card.name}}" height=54 class="card2">
+		</div>
+		<div class="cell-group">
+			<div class="popupTitle">Middle Cards:</div>
+			<span *ngFor="let card of gameObj.middleCards"> 
+				<img *ngIf="card.revealFlg || youPlayer.middlePeekId==card.cardNum" src="assets/cards/{{card.src}}" title="{{card.name}}" height=80 class="card2" (click)=clickMiddleCard(card)>
+				<img *ngIf="!card.revealFlg && youPlayer.middlePeekId!=card.cardNum" src="assets/cards/cardBack.jpg" title="Unknown" height=80 class="card2" (click)=clickMiddleCard(card)>
+				<span *ngIf="testMode">[{{card.cardNum}}]</span>
+			</span>
+		</div>
+		<div class="cell-group" *ngIf="youPlayer">
+			<div class="popupTitle">Your card:</div>
+			<img (click)=selectCard(youPlayer.card) src="assets/cards/{{youPlayer.card.src}}" title="{{youPlayer.card.name}}" height=160 class="card2">
+			<div><b>{{youPlayer.card.name}}:</b> {{youPlayer.card.desc}}</div>
+			<div *ngIf="youPlayer.arrestName && youPlayer.arrestName.length>0" style="color: green;">Your Arrest Choice: <b>{{youPlayer.arrestName}}</b></div>
+		</div>
+		<div class="popupTitle">Current Phase: {{gameObj.phase}}</div>
+
+
+		<div *ngIf="gameObj.phase=='Dealing Cards' && youPlayer">
+			<div *ngIf="!youPlayer.leftId" style="background-color: yellow;">Which player is sitting to your left? Click on that player's name above.</div>
+			<div *ngIf="youPlayer.leftId">
+				<div style="color: white;">Player on Left: {{youPlayer.leftName}}</div>
+				<div *ngIf="!youPlayer.rightId" style="background-color: yellow;">Which player is sitting to your right? Click on that player's name above.</div>
+				<div *ngIf="youPlayer.rightId">
+					<div style="color: white;">Player on Right: {{youPlayer.rightName}}</div>
+					<button (click)="redoLeftRightButtonPressed()" class="button-white tight"><i class="fa fa-refresh"></i> Redo</button>
+					<div *ngIf="!youPlayer.checkFlg" style="background-color: yellow;">Click 'Ready'.</div>
+				</div>
+			</div>
+		</div>
+		<div *ngIf="gameObj.phase=='Discovery'">
+			<div *ngIf="!youPlayer.checkFlg && gameObj.discoveryAction==0" style="background-color: yellow;">View your card, note your objectives, and then press 'Ready'.</div>
+			<div *ngIf="gameObj.discoveryAction==1" style="background-color: yellow;">Click on a player card above to reveal their card.</div>
+			<div *ngIf="gameObj.discoveryAction==2" style="background-color: yellow;">Click on a middle card above to reveal it.</div>
+			<div *ngIf="gameObj.discoveryAction==3" style="background-color: yellow;">You are one of the robbers! Other robbers have been revealed as well (look above highlighted in orange). Now choose to reveal one player's card by clicking on their name above.</div>
+			<div *ngIf="gameObj.discoveryAction==4" style="background-color: yellow;">Click on two middle cards above to reveal them.</div>
+			<div *ngIf="gameObj.discoveryAction==5" style="background-color: yellow;">Click on 2 players above to switch their cards.</div>
+		</div>
+		<div *ngIf="gameObj.phase=='Discussion'">
+			<div *ngIf="!youPlayer.checkFlg" style="background-color: yellow;">Discuss the crime with others in the room. If you are a cop, you are trying to arrest a criminal, if you are a criminal, you are trying to give false info in hopes of fooling the cops. Click button below when ready to make an arrest. Maximum of 2 minutes to discuss.</div>
+			<div style="font-size: 36px; background-color: black; color: white;">{{timer}}</div>
+			<div *ngIf="secondsRemaining<=0">Time's up!</div>
+		</div>		<div *ngIf="discoveryFind" style="background-color: orange;">{{discoveryFind}}</div>
+		<div *ngIf="gameObj.phase=='Make an Arrest'">
+			<div *ngIf="youPlayer.arrestId==0" style="background-color: yellow;">Click on a name above to make an arrest.</div>
+			<button *ngIf="!youPlayer.checkFlg && selectedPlayer" (click)="arrestButtonPressed()" class="button-blue"><i class="fa fa-check"></i> Arrest {{selectedPlayer.name}}!</button>
+		</div>
+		<div *ngIf="gameObj.arrestedPlayer">
+			<div class="title popupTitle">Player Arrested:</div>
+			<img (click)=selectCard(gameObj.arrestedPlayer.card) src="assets/cards/{{gameObj.arrestedPlayer.card.src}}" title="{{gameObj.arrestedPlayer.card.name}}" height=160 class="card2">
+			<img src="assets/avatars/{{gameObj.arrestedPlayer.avatar}}" height=100> <span class="title popupTitle">{{gameObj.arrestedPlayer.name}}</span>
+			<div *ngIf="gameObj.arrestedPlayer.criminalFlg != youPlayer.criminalFlg" style="font-size: 24px; color: yellow;">Your team won!</div>
+			<div *ngIf="gameObj.arrestedPlayer.criminalFlg == youPlayer.criminalFlg" style="font-size: 24px; color: yellow;">Your team lost!</div>
+			<div class="title">Your points: {{youPlayer.gamePoints}}</div>
+			<div class="popupTitle">Points for this round:</div>
+			<table width=100%>
+			<tr class="popupTitle"><td></td><td>Name</td><td>Card</td><td>Pts</td></tr>
+			<tr *ngFor="let player of gameObj.players" class="cell-row">
+				<td><img src="assets/avatars/{{player.avatar}}" height=40></td>
+				<td><i *ngIf="player.checkFlg" class="fa fa-check" style="color: green;"></i><i *ngIf="player.hostFlg" class="fa fa-h-square" style="color: orange;"></i> {{player.name}}</td>
+				<td> 
+					<img (click)=selectCard(player.card) src="assets/cards/{{player.card.src}}" title="{{player.card.name}}" height=40 class="card2">
+				</td>
+				<td>{{player.gamePoints}}</td>
+			</tr>
+			</table>
+			
+			<div *ngIf="!youPlayer.checkFlg" style="background-color: yellow;">Points have been awarded! Press button when ready for a new round.</div>
+		</div>
+		<div *ngIf="youPlayer && youPlayer.checkFlg && !gameObj.allReadyFlg" style="background-color: yellow;">Waiting for other players to check in.</div>
+		<div *ngIf="youPlayer && youPlayer.checkFlg && gameObj.allReadyFlg" style="background-color: yellow;">Waiting for host to advance the game.</div>
+		<div *ngIf="gameObj.phase=='Game Over!' && gameObj.winningPlayer" style="color: yellow; font-size: 32px;">
+		<img src="assets/avatars/{{gameObj.winningPlayer.avatar}}" height=80> {{gameObj.winningPlayer.name}} has won!
+		</div>
+		
+		<button *ngIf="youPlayer && !youPlayer.checkFlg && gameObj.discoveryAction==0 && gameObj.phase!='Game Over!'" (click)="readyButtonPressed()" class="button-blue large"><i class="fa fa-check"></i> Ready</button>
+
+
+		<div *ngIf="testMode" style="border: 1px solid red; background-color: #ccc;"><b><u>-Test-</u></b><br>
+			<div>discoveryAction {{discoveryAction}}</div>
+			<div>.readyFlg {{serverUpdate.readyFlg}}</div>
+			<div>.playerFlg {{serverUpdate.playerFlg}}</div>
+			<div>.gameFlg {{serverUpdate.gameFlg}}</div>
+			<div>.gameObj.discoveryAction {{gameObj.discoveryAction}}</div>
+			<div>gameObj.gamePoints {{gameObj.gamePoints}}</div>
+			<button *ngIf="testMode" (click)="serverUploadButtonPressed()" class="button-white tight"><i class="fa fa-arrow-up"></i> Save & Upload</button>
+			<button (click)="serverDownloadButtonPressed()" class="button-white tight"><i class="fa fa-refresh"></i> Refresh Game</button>
+		</div>
+			<button *ngIf="gameObj.hostFlg && gameObj.discoveryAction==0 && !gameObj.allReadyFlg" (click)="readyAllButtonPressed()" class="button-white tight"><i class="fa fa-check"></i> Ready All</button>
+		<div *ngIf="gameObj.hostFlg" style="border: 1px solid red; background-color: #ccc;"><b><u>-Host-</u></b><br>
+			<button *ngIf="gameObj.phase=='Joining' && testMode" (click)="addBotButtonPressed()" class="button-blue tight"><i class="fa fa-android"></i> Add Bot</button>
+			<button *ngIf="gameObj.phase=='Joining' && selectedPlayer" (click)="bootPlayerButtonPressed()" class="button-blue tight"><i class="fa fa-trash"></i> Boot Player</button>
+			<button *ngIf="gameObj.allReadyFlg && gameObj.phase!='Game Over!'" (click)="advanceButtonPressed()" class="button-blue large"><i class="fa fa-arrow-right"></i> {{advanceButtonMessage}}</button>
+		</div>
+
+
+
+	</div>
+</div>
+	<div class="popupTitle" style="background-color: #037;">
+		<button (click)="exitGame()" class="button-white tight">Exit Game</button>
+		<button (click)="showPopup('infoPopup')" class="button-blue">Rules</button>
+		<button (click)="showPopup('charactersPopup')" class="button-blue">Characters</button>
+	</div>
+</td></tr></table>
+
+
+<div id="charactersPopup" class="popup">
+	<div class="popupTitle" (click)="showPopup('charactersPopup')">Characters<span class="icon-right"><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall">
+	<div style="background-color: #700; color: white;">The Criminals</div>
+	<div *ngFor="let card of cards">
+		<div *ngIf="card.id>0 && card.criminalFlg">
+			<table><tr>
+			<td><img (click)="selectCard(card)" class="card2 criminal" src="assets/cards/{{card.src}}" title="{{card.name}}" height=80></td>
+			<td><div style="font-size: 16px;"><b>{{card.name}}:</b></div>
+			<div style="font-size: 11px; text-align: left; padding-left: 10px;">{{card.desc}}</div></td>
+			</tr></table>
+		</div>
+	</div>
+	<div style="background-color: #700;">Bonus Objective: If Police Chief is arrested, +3 points to all criminals.</div>
+	<div style="background-color: #007; color: white;">The Cops</div>
+	<div *ngFor="let card of cards">
+		<div *ngIf="card.id>0 && !card.criminalFlg">
+			<table><tr>
+			<td><img (click)="selectCard(card)" class="card2 criminal" src="assets/cards/{{card.src}}" title="{{card.name}}" height=80></td>
+			<td><div style="font-size: 16px;"><b>{{card.name}}:</b></div>
+			<div style="font-size: 11px; text-align: left; padding-left: 10px;">{{card.desc}}</div></td>
+			</tr></table>
+		</div>
+	</div>
+	<div style="background-color: #007;">Bonus Objective: If Boss is arrested, +3 points to all cops.</div>
+
+	</div>
+	<button (click)="showPopup('charactersPopup')" type="button" class="button-white">Close</button>
+</div>
+
+<img *ngIf="selectedCard" style="position: fixed; display: none;" (click)="dismisCard()" id="selectedCardPopup" class="card2 criminal" src="assets/cards/{{selectedCard.src}}" title="{{selectedCard.name}}" height=300>
+
+<div id="infoPopup" class="popup" (click)="showPopup('infoPopup')">
+	<div class="popupTitle">Rules<span class="icon-right" ><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall">
+	<img src="assets/copsLogo2.png" width=100%>
+	<div style="text-align: left;">
+		<p> The object is very simple: If you are a cop, you are trying to arrest a robber. If you are a robber, you are trying to fool the cops into arresting an innocent person.</p>
+		<p>There are 14 available cards, divided into 7 cops and 7 robbers. The cards are randomly handed out with one card to each player, roughly evenly split between cops and robbers.<p>
+		<p>There are 4 phases to a round:</p>
+		<ol>
+			<li> Deal Cards</li>
+			<li> Discovery</li>
+			<li> Discussion</li>
+			<li> Make an Arrest</li>
+		</ol>
+		<p> <b>1) Deal Cards:</b> Once the game begins, each player is given a random character card (either cop or robber) and reads the objectives. Some characters have multiple possible objectives for the round.</p>
+		<p> <b>2) Discovery:</b> When everyone is ready, the game moves into the next phase. At this point each player might be given specific information or have actions to take, such as switching or peeking at cards.</p>
+		<p> <b>3) Discussion:</b> Once everyone is ready, the game moves to the dicussion phase for 2 minutes. The discussion is quite simple: If you are a cop, you want to tell everyone what you know and who you think should be arrested. The robbers are trying to lie and confuse the cops into picking the wrong person.</p>
+		<p> <b>4) Make an Arrest:</b> After 2 minutes of discussion, everyone selects a person to arrest. Once all the votes are in, the person with the most votes is arrested and revealed. If the person arrested is a robber, the cops win, otherwise the robbers win. Additional victory conditions are available to certain characters.</p>
+		<p> Points are awards to each player and the game ends once one player reaches 20 points.</p>
+	</div>
+	</div>
+</div>
+
+<div id="messagePopup" class="popup">
+	<div class="paddedSmall">
+		<span style="font-size:18px;" id="popupMessageText"></span>
+		<div><button (click)="showPopup('messagePopup')" id="" type="button" class="button-white large">OK</button></div>
+	</div>
+</div>
+
+<div id="busyPopup" class="popup" (click)="showPopup('busyPopup')">
+	<div class="paddedSmall">
+	<div>Working...</div>
+	<i style="font-size: 36px;" class="fa fa-spinner fa-spin"></i>
+</div></div>

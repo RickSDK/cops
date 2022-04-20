@@ -1,0 +1,5 @@
+<app-header></app-header>
+
+<h1>{{title}}</h1>
+<h2 class="alert alert-success">Boostrap Alert</h2>
+<i class="fa fa-android">Font-awesome</i>

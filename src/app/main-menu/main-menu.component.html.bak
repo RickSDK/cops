@@ -1,0 +1,160 @@
+<img id="" class="hidden-xs" style="position: fixed; left:0, top: 0; width: 100%; min-height: 100%; z-index: -1;" src="assets/splash/spBW.png">
+<img id="" class="visible-xs" style="position: fixed; left:0, top: 0; width: 100%; min-height: 100%; z-index: -1;" src="assets/splash/spBW2.png">
+
+
+<div style="text-align: center;">
+<img style="width: 100%;" id="spLogo" src="assets/copsLogo2.png" class="image">
+<div style="display: inline-block;">
+	<img class="shadowed" (click)="joinGamePressed()" title="Join Game" style="cursor: pointer;" src="assets/buttons/joinGame.png" height="250" width="250">
+</div>
+<div style="display: inline-block; vertical-align: middle; width: 200px;">
+	<div *ngIf="username && username.length>0" class="boxed">
+		<div class="title popupTitle">{{username}}</div>
+		<button (click)="userLogout()" class="button-white tight">Logout</button>
+	</div>
+	<button *ngIf="!username || username.length==0" (click)="showPopup('loginPopup')" class="button-blue">Login</button>
+	<button (click)="showPopup('infoPopup')" class="button-blue">Rules</button>
+	<button (click)="showPopup('charactersPopup')" class="button-blue">Characters</button>
+	<button (click)="startSinglePlayer()" class="button-blue">Test Single Player</button>
+</div>
+<div style="display: inline-block; vertical-align: middle;">
+	<img class="shadowed" (click)="createGamePressed()" title="Join Game" style="cursor: pointer;" src="assets/buttons/createGame.png" height="250" width="250">
+</div>
+</div>
+
+<div id="loginPopup" class="popup">
+	<div class="popupTitle">Login<span class="icon-right" (click)="showPopup('loginPopup')"><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall" *ngIf="!createFlg">
+		<div><input type=text id="email" placeholder="Email" style="width: 100%;"></div>
+		<div><input type=password id="password" placeholder="Password" style="width: 100%;"></div>
+		<button (click)="login()" type="button" class="button-white">Login</button>
+		<div><button (click)="createOptionPressed()" type="button" class="button-blue tight">Create new account</button></div>
+	</div>
+	<div class="paddedSmall" *ngIf="createFlg">
+		<div><input type=text id="email" placeholder="Email" style="width: 100%;"></div>
+		<div><input type=text id="firstName" placeholder="First Name" style="width: 100%;"></div>
+		<div><input type=password id="password" placeholder="Password" style="width: 100%;"></div>
+		<div><input type=password id="password2" placeholder="Retype Password" style="width: 100%;"></div>
+		
+		<button (click)="changeAvatarPressed()" type="button" class="button-white tight"><img src="assets/avatars/avatar{{avatarId}}.png" height=80></button>
+		<button (click)="createOptionPressed()" type="button" class="button-white tight"><i class="fa fa-arrow-left"></i> back</button>
+		<button (click)="createButtonPressed()" type="button" class="button-white">Submit</button>
+		<div>
+			<img [style.border] = "avId==avatarId?'4px solid red':'4px solid white'" *ngFor="let avId of avatarList" src="assets/avatars/avatar{{avId}}.png" height=45>
+		</div>
+	</div>
+</div>
+<div id="charactersPopup" class="popup">
+	<div class="popupTitle" (click)="showPopup('charactersPopup')">Characters<span class="icon-right"><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall">
+	<div style="background-color: #700; color: white;">The Criminals</div>
+	<div *ngFor="let card of cards">
+		<div *ngIf="card.criminalFlg">
+			<table><tr>
+			<td><img (click)="selectCard(card)" class="card2 criminal" src="assets/cards/{{card.src}}" title="{{card.name}}" height=80></td>
+			<td><div style="font-size: 16px;"><b>{{card.name}}:</b></div>
+			<div style="font-size: 11px; text-align: left; padding-left: 10px;">{{card.desc}}</div></td>
+			</tr></table>
+		</div>
+	</div>
+	<div style="background-color: #007; color: white;">The Cops</div>
+	<div *ngFor="let card of cards">
+		<div *ngIf="!card.criminalFlg && card.id>0">
+			<table><tr>
+			<td><img (click)="selectCard(card)" class="card2 criminal" src="assets/cards/{{card.src}}" title="{{card.name}}" height=80></td>
+			<td><div style="font-size: 16px;"><b>{{card.name}}:</b></div>
+			<div style="font-size: 11px; text-align: left; padding-left: 10px;">{{card.desc}}</div></td>
+			</tr></table>
+		</div>
+	</div>
+
+
+	</div>
+	<button (click)="showPopup('charactersPopup')" type="button" class="button-white">Close</button>
+</div>
+
+<img style="position: fixed; display: none;" (click)="showPopup('selectedCardPopup')" id="selectedCardPopup" class="card2 criminal" src="assets/cards/{{selectedCard.src}}" title="{{selectedCard.name}}" height=300>
+
+<div id="joinGamePopup" class="popup">
+	<div class="popupTitle">Join Game<span class="icon-right" (click)="showPopup('joinGamePopup')"><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall">
+		<div>-Open Game List-</div>
+		<div *ngFor="let game of gameList" class="cell-row" (click)="selectGame(game)">
+			<div style="font-size: 16px;"><b>{{game.name}}</b></div>
+			<div style="font-size: 12px;">Host: {{game.host}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Players: {{game.players}}</div>
+		</div>
+		<div *ngIf="gameList.length==0" style="padding: 20px;">No available games! Click 'Create Game' to get one started.</div>
+	</div>
+	<button (click)="refreshPressed()" type="button" class="button-white tight"><i class="fa fa-refresh"></i> Refresh</button>
+</div>
+<div id="joinSelectedGamePopup" class="popup" *ngIf="selectedGame">
+	<div class="popupTitle">Join Game<span class="icon-right" (click)="showPopup('joinSelectedGamePopup')"><i class="fa fa-times"></i></span></div>
+	<div style="font-size: 16px;">name: <b>{{selectedGame.name}}</b></div>
+	<div>row_id: {{selectedGame.row_id}}</div>
+	<div>host: {{selectedGame.host}}</div>
+	<div># Players: {{selectedGame.players}}</div>
+	<div>round: {{selectedGame.round}}</div>
+	<div>phase: {{selectedGame.phase}}</div>
+	<div>hostFlg: {{selectedGame.hostFlg}}</div>
+	<div>inGameFlg: {{selectedGame.inGameFlg}}</div>
+	<div>status: {{selectedGame.status}}</div>
+	<div *ngIf="selectedGame && selectedGame.status=='Open'">
+		<button *ngIf="selectedGame && selectedGame.inGameFlg=='N'" (click)="joinOpenGame()" type="button" class="button-white"><i class="fa fa-plus"></i> Join Game</button>
+		<button *ngIf="selectedGame && selectedGame.inGameFlg=='Y'" (click)="exitGame()" type="button" class="button-blue"><i class="fa fa-times"></i> Leave Game</button>
+		<button *ngIf="selectedGame && selectedGame.inGameFlg=='Y'" (click)="enterGame()" type="button" class="button-blue"><i class="fa fa-arrow-right"></i> Enter Game</button>
+		<button *ngIf="selectedGame && selectedGame.hostFlg=='Y'" (click)="cancelGame()" type="button" class="button-red"><i class="fa fa-trash"></i> Cancel Game</button>
+		<button *ngIf="selectedGame && selectedGame.hostFlg=='Y'" (click)="addBot()" type="button" class="button-blue"><i class="fa fa-android"></i> Add Bot</button>
+		<button *ngIf="selectedGame && selectedGame.hostFlg=='Y' && selectedGame.players>3" (click)="startGame()" type="button" class="button-blue"><i class="fa fa-plus"></i> Start Game</button>
+	</div>
+</div>
+<div id="createGamePopup" class="popup">
+	<div class="popupTitle">Create Game<span class="icon-right" (click)="showPopup('createGamePopup')"><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall">
+		<div class="title">Create a Game</div>
+		<div><input type=text id="gameName" placeholder="Name" style="width: 100%;"></div>
+		<button (click)="showPopup('createGamePopup')" id="exitButton" type="button" class="button-white tight">Exit</button>
+		<button (click)="createGame()" type="button" class="button-white">Create</button>
+	</div>
+</div>
+
+<div id="busyPopup" class="popup" (click)="showPopup('busyPopup')">
+	<div class="paddedSmall">
+	<div>Working...</div>
+	<i style="font-size: 36px;" class="fa fa-spinner fa-spin"></i>
+</div></div>
+
+<div id="messagePopup" class="popup">
+	<div class="paddedSmall">
+		<span style="font-size:18px;" id="popupMessageText"></span>
+		<div><button (click)="showPopup('messagePopup')" id="" type="button" class="button-white large">OK</button></div>
+	</div>
+</div>
+
+<div id="infoPopup" class="popup" (click)="showPopup('infoPopup')">
+	<div class="popupTitle">Rules<span class="icon-right" ><i class="fa fa-times"></i></span></div>
+	<div class="paddedSmall">
+	<img src="assets/copsLogo2.png" width=100%>
+	<div style="text-align: left;">
+		<p> The object is very simple: If you are a cop, you are trying to arrest a robber. If you are a robber, you are trying to fool the cops into arresting an innocent person.</p>
+		<p>There are 14 available cards, divided into 7 cops and 7 robbers. The cards are randomly handed out with one card to each player, roughly evenly split between cops and robbers.<p>
+		<p>There are 4 phases to a round:</p>
+		<ol>
+			<li> Deal Cards</li>
+			<li> Discovery</li>
+			<li> Discussion</li>
+			<li> Make an Arrest</li>
+		</ol>
+		<p> <b>1) Deal Cards:</b> Once the game begins, each player is given a random character card (either cop or robber) and reads the objectives. Some characters have multiple possible objectives for the round.</p>
+		<p> <b>2) Discovery:</b> When everyone is ready, the game moves into the next phase. At this point each player might be given specific information or have actions to take, such as switching or peeking at cards.</p>
+		<p> <b>3) Discussion:</b> Once everyone is ready, the game moves to the dicussion phase for 2 minutes. The discussion is quite simple: If you are a cop, you want to tell everyone what you know and who you think should be arrested. The robbers are trying to lie and confuse the cops into picking the wrong person.</p>
+		<p> <b>4) Make an Arrest:</b> After 2 minutes of discussion, everyone selects a person to arrest. Once all the votes are in, the person with the most votes is arrested and revealed. If the person arrested is a robber, the cops win, otherwise the robbers win. Additional victory conditions are available to certain characters.</p>
+		<p> Points are awards to each player and the game ends once one player reaches 20 points.</p>
+	</div>
+	</div>
+</div>
+
+<div id="inGamePopup" class="popup" (click)="showPopup('inGamePopup')">
+	<div>You are already in a Game!</div>
+	<a routerLink="/board"> <button type="button" class="button-white large">Enter Game</button></a>
+</div>
+

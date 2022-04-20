@@ -1,0 +1,374 @@
+/* You can add global styles to this file, and also import other style files */
+$gray: #ccc;
+$dark-blue: #065077;
+$medium-blue: #5c8faa;
+$light-blue: #3aa5dc;
+$faint-blue: #ddeeff;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Verdana, Geneva, sans-serif; background-color: $gray; }
+
+#topBar {
+	background-color: $dark-blue;
+	color: white;
+	padding: 10px;
+	height: 50px;
+	line-height: 50px;
+}
+.darkBlue {
+  color:$dark-blue;
+}
+.mediumBlue {
+  color:$medium-blue;
+}
+.container1 {
+text-align: center;
+}
+.container2 {
+	text-align: center; width: 100%; max-width: 800px; display: inline-block;
+}
+.circle18 {
+display:inline-block;width:25px;height:25px;border-radius:50%;background-color:#09f;margin-bottom: -3px; font-size: 18px;
+}
+
+input {
+ background-color: #fff;
+ padding:10px;
+ border: 5px solid #ccc;
+ box-shadow: 2px 2px 5px black;
+ margin: 1px;
+}
+input[disabled]{
+	background-color: #999;
+	color: #555;
+}
+.boldText {
+font-size: 20px;
+font-weight: 700;
+}
+/*--------------images*/
+.shadowed {
+}
+.shadowed:hover {
+    -webkit-filter: drop-shadow(12px 12px 12px rgba(0,0,0,1));
+    -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=12, OffY=12, Color='#000')";
+    filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=12, OffY=12, Color='#000')";
+}
+/*------------cards------*/
+.card2 {
+    display: inline-block;
+    background-color: white;
+    color: black;
+    box-shadow: 2px 2px 5px #000;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid black;
+}
+.card2:hover {
+    border: 2px solid white;
+    box-shadow: 5px 5px 10px #000;
+}
+.cop {
+    border: 2px solid #007;
+}
+.criminal {
+    border: 2px solid #700;
+}
+.myCard {
+    border: 3px solid yellow;
+}
+.card {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 700;
+    background-color: white;
+    color: black;
+    box-shadow: 2px 2px 5px #000;
+    border: 2px solid black;
+    text-align: center;
+    padding: 15px 7px;
+    border-radius: 10px;
+}
+
+
+/*-------------------segment*/
+.segment-blue, .segment-white {
+  -webkit-transition-duration: 0.4s;
+  padding: 5px 5px;
+  box-shadow: 5px 5px 5px grey;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid black;
+  white-space: nowrap;
+}
+.segment-blue {
+  background-color: $light-blue;
+}
+.segment-blue:hover {
+  background-color: $medium-blue;
+}
+.segment-white {
+  background-color: #fff;
+}
+.segment-white:hover {
+  background-color: $medium-blue;
+}
+.chart {
+  background-color: #9cf;
+  border: 1px solid gray;
+}
+/*-------------------views*/
+.ltGrayView {
+  background-color: #ddd;
+  color: black;
+}
+.grayView {
+  background-color: #555;
+  color: white;
+}
+.lightBlueView {
+  text-align: center;
+  background-color: $light-blue;
+  color: white;
+}
+.mediumBlueView {
+  text-align: center;
+  background-color: $medium-blue;
+  color: white;
+}
+.darkBlueView {
+  text-align: center;
+  background-color: $dark-blue;
+  color: white;
+}
+/*-------------------buttons*/
+.button-blue, .button-white, .button-red {
+  -webkit-transition-duration: 0.4s;
+  border-radius: 5px;
+  padding: 15px 32px;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 5px 5px 5px grey;
+  margin: 5px;
+  cursor: pointer;
+}
+button:disabled,
+button[disabled]{
+	background-color: #999;
+	color: #555;
+}
+.button-blue {
+  background-color: $light-blue;
+  border: 1px solid white;
+  color: white;
+}
+.button-blue:hover {
+	background-color: $medium-blue;
+}
+.button-red {
+  background-color: red;
+  border: 1px solid white;
+  color: white;
+}
+.button-red:hover {
+	background-color: $medium-blue;
+}
+.button-blue:active {
+	background-color: $light-blue;
+}
+.button-white {
+  background-color: #fff;
+  border: none;
+  color: black;
+}
+.button-white:hover {
+	background-color: $light-blue;
+}
+.button-white:active {
+	background-color: blue;
+}
+.large {
+ 	font-size: 22px;
+}
+.tight {
+ 	font-size: 16px;
+ 	padding: 5px 10px;
+}
+.title {
+  color: white;
+  text-shadow: 1px 1px 2px black, 0 0 25px $faint-blue, 0 0 5px darkblue;
+}
+/*-------------------popup*/
+.boxed {
+  border: 1px solid black;
+  padding: 0;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  background-color: $medium-blue;
+}
+.popup {
+  border: 1px solid black;
+  padding: 0;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  background-color: $medium-blue;
+  color: white;
+  font-size: 12px;
+  display: none;
+  width: 95%;
+  max-width: 400px;
+  text-align:center;
+  position: absolute; 
+  top: 20px;
+}
+.outlined {
+  border: 1px solid black;
+  padding: 0;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  background-color: $medium-blue;
+  color: white;
+  font-size: 12px;
+  display: none;
+  width: 100%;
+  text-align:center;
+  top: 20px;
+}
+.popupTitle {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  background-color: $dark-blue;
+  padding: 5px;
+  color: white;
+}
+.nowrap {
+  white-space:nowrap;
+}
+.padded {
+  padding: 5px 25px 5px 25px;
+}
+.paddedSmall {
+  padding: 5px;
+}
+
+/*-------------------icons*/
+.icon {
+  cursor:pointer;
+ }
+.icon:hover {
+  color: $faint-blue;
+}
+.icon-right {
+  float:right;
+  padding-right:5px;
+  padding-left:10px;
+  cursor:pointer;
+}
+/*-------------------rows*/
+.row {
+  border: 1px solid gray;
+  background-color: white;
+  cursor: pointer;
+  text-align: left;
+}
+.row:hover {
+  background-color: $faint-blue;
+}
+.row44 {
+  height: 44px;
+  line-height: 44px;
+  padding-left: 25px;
+  padding-right: 25px;
+  font-size: 24px;
+  color: black;
+}
+.cell-group {
+  background-color: #fff;
+  border: 1px solid gray;
+}
+.cell-group:hover {
+  border: 2px solid black;
+}
+.cell-row {
+  color: $dark-blue;
+  cursor: pointer;
+   border: 1px solid gray;
+}
+.cell-row:nth-child(even) {
+  background-color: white;
+}
+.cell-row:nth-child(odd) {
+  background-color: $faint-blue;
+}
+.cell-row:hover {
+  background-color: $medium-blue;
+  color: white;
+ }
+.cellTitle {
+color: purple;
+padding-left:10px;
+font-weight: 700;
+}
+.cellAltTitle {
+color: $medium-blue;
+padding-right:10px;
+font-weight: 700;
+}
+
+/*-------------------money*/
+.moneyAssetLite {
+  color: #cfc;
+}
+.moneyDebtLite {
+  color: #fc0;
+}
+.moneyZeroLite {
+  color: #fff;
+}
+.moneyAssetDark {
+  color: #090;
+}
+.moneyDebtDark {
+  color: #900;
+}
+.moneyZeroDark {
+  color: #000;
+}
+
+@media screen and (min-width: 700px) { /*large Screen*/
+	.large {
+		font-size: 42px; 
+	}
+	.boldText {
+		font-size: 24px;
+	}
+}
+@media screen and (min-width: 500px) { /*Small Screen*/
+	.hidden-xs {
+		display: block;
+	}
+	.visible-xs {
+		display: none;
+	}
+}
+@media screen and (max-width: 500px) { /*Small Screen*/
+	.hidden-xs {
+		display: none;
+	}
+	.visible-xs {
+		display: block;
+	}
+	.large {
+		font-size: 22px; 
+	}
+	.boldText {
+		font-size: 16px;
+	}
+	.button-blue, .button-white, .button-red {
+		padding: 10px 16px;
+		font-size: 12px;
+	}
+}
